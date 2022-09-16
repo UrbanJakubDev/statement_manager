@@ -51,7 +51,8 @@ services:
     environment:
       CHOKIDAR_USEPOLLING: "true"
     volumes:
-      - ./frontend:/frontend
+       - ./frontend/:/frontend/
+       - /frontend/node_modules
     ports:
       - "3000:3000"
     command: npm run dev
@@ -67,8 +68,6 @@ services:
       - backend
       - frontend
   
-  
-
   celery:
     container_name: Celery-Worker
     restart: always

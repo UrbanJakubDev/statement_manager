@@ -7,17 +7,56 @@ import { useState, useEffect, ChangeEvent } from "react";
 
 const Home: NextPage = () => {
   // File state
-  const [message, setMessage] = useState("");
+  const [data, setData] = useState<Object>();
+  const [file, setFile] = useState<File | null>(null);
+  const [uploadResponse, setUploadResponse] = useState<Object | null>();
 
-  
+  // On file select (from the pop up) set the file state
+  const onFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files) {
+      console.log(event.target.files[0]);
+      setFile(event.target.files[0]);
+    }
+
+    // Clear the input
+    // event.target.value = "";
+  };
+
+  // Function to clear the input file after successful upload
+  const clearInput = () => {
+    const input = document.getElementById("uploadFile");
+    if (input) {
+      input.value = "";
+    }
+  };
+
+  // On file upload (click the upload button) not reload the page and send the file
+  const onFileUpload = (event: { preventDefault: () => void }) => {
+    event.preventDefault();
+    if (file) {
+      const formData = new FormData();
+      formData.append("file", file);
+      axios
+        .post("http://localhost:4200/example/upload/", formData)
+        .then((res) => {
+          setUploadResponse(res.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+
+    // Clear the input
+    clearInput();
+
+  };
 
   // Get all files
   const getAPIResponse = async () => {
     const res = await axios
       .get("http://localhost:4200/example/example/")
       .then((res) => {
-        console.log(res.data);
-        setMessage(res.data);
+        setData(res.data);
       });
   };
 
@@ -35,9 +74,22 @@ const Home: NextPage = () => {
       </Head>
 
       <main className={styles.main}>
-        <h3>Message from API</h3>
-        <p>{message?.message}</p>
-        
+        <h1>File uploader</h1>
+        <form onSubmit={onFileUpload}>
+          <input id="uploadFile" type="file" onChange={onFileChange} />
+          {file? <button type="submit">Upload!</button> : null}
+          {
+            // Redner the file upload response from the server if it exists
+            uploadResponse ? (
+              <div>
+                <p>{uploadResponse.message}</p>
+              </div>
+            ) : null
+          }
+        </form>
+
+        <h1>Files</h1>
+        <div></div>
       </main>
 
       <footer className={styles.footer}>
