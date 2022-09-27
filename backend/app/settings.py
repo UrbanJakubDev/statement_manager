@@ -46,6 +46,8 @@ CORS_ORIGIN_ALLOW_ALL = True
 
 INSTALLED_APPS = [
     'example_app.apps.ExampleAppConfig',
+    'ote.apps.OteConfig',
+    # 'eru.apps.EruConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

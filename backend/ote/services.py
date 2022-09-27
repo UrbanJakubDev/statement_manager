@@ -101,7 +101,7 @@ class XMLMessageBuilder:
         date_now = kwargs.get('date_now', None)
 
         # Generate message root timestamps
-        self.generate_message_root_timestamps(date_now=date_now)
+        self.generate_message_timestamp(date_now=date_now)
 
         # Generate sender identification
         message_root_date = self.message_root_date

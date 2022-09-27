@@ -23,6 +23,8 @@ urlpatterns = [
     
     # include example_app urls
     path('example/' , include('example_app.urls')),
+    path('ote/', include('ote.urls')),
+    # path('eru/', include('eru.urls')),
 
     # include admin urls
     path('admin/', admin.site.urls),
