@@ -1,12 +1,14 @@
 from http.client import HTTPResponse
 import os
-from urllib import response
-from django.shortcuts import render
-import xml.etree.ElementTree as ET
-from rest_framework import viewsets, generics, views
+import pprint
+
+from django.shortcuts import HttpResponse
+from .models import Unit
+from rest_framework import views
 from rest_framework import permissions
 from rest_framework.response import Response
-from django.http import JsonResponse, FileResponse
+from django.http import FileResponse
+import pandas as pd
 
 from .services import XMLMessageBuilder
 
@@ -18,40 +20,44 @@ class MakeXMLMessageView(views.APIView):
 
     def get(self, request):
 
-        # file absolute path to actual folder and file 'message.xml'
-        file_path = './message.xml'
-        year = 2022
-        month = 8
-        units = [
-            {
-                "idf": "019259_Z11",
-                "ean": "859182400211637793"
-            },
-            {
-                "idf": "034687_Z11",
-                "ean": "859182400211958560"
-            },
-            {
-                "idf": "034687_Z11",
-                "ean": "859182400211958560"
-            }
-        ]
+        year = int(request.GET.get('year'))
+        month = int(request.GET.get('month'))
+        units_limit = int(request.GET.get('units-limit'))
 
+        # Initiate XMLMessageBuilder class
         builder = XMLMessageBuilder(
             sender_id="8591824556207",
             reciever_id="8591824000007",
             coding_scheme="14",
             sender_role='V')
 
-        message = builder.make_message_body(
-            year=year, month=month, units=units)
+        # Query units from database
+        units = Unit.objects.all().values('idf', 'ean')
 
-        with open('./message.xml', 'w') as f:
-            f.write(message)
+        # Generate XML files
+        builder.generate_xml_files(year, month, units, units_limit=units_limit)
+        builder.generate_zip_file('files.zip')
 
-        # return succesful response
-        response = FileResponse(
-            open('./message.xml', 'rb'),
-            content_type='application/xml'
-        )
+    
+        file_memory = open('files.zip', 'rb')
+        response = FileResponse(file_memory, as_attachment=True, filename='files.zip')
         return response
+
+
+# Only for testing purposes
+# View to load Units from csv file to database
+class LoadUnitsView(views.APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def get(self, request):
+
+        items = pd.read_csv('./units.csv')
+
+        for index, row in items.iterrows():
+            unit = Unit(
+                idf=row[1],
+                ean=row[0]
+            )
+            unit.create()
+
+        return Response({'status': 'success'})

@@ -4,5 +4,6 @@ from . import views
 
 urlpatterns = [
 
-   path('make_xml_message/', views.MakeXMLMessageView.as_view())
+   path('make_xml_message/', views.MakeXMLMessageView.as_view()),
+   path('load_units/', views.LoadUnitsView.as_view())
 ]

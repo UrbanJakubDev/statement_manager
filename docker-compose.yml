@@ -7,7 +7,7 @@ services:
     image: redis:alpine
 
   db:
-    container_name: MariaDB
+    container_name: PostgresDB
     restart: always
     image: postgres
     volumes:

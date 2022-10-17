@@ -57,8 +57,8 @@ const FileForm = (props: Props) => {
 
     // Render
     return (
-        <div>
-            <span>Formulář</span>
+        <div className='component'>
+            <h2>Create XML from File</h2>
             <form>
                 <input
                     id="uploadFile"

@@ -161,6 +161,7 @@ CORS_ORIGIN_ALLOW_ALL = True
 BROKER_URL = 'redis://redis:6379'
 CELERY_RESULT_BACKEND = 'redis://redis:6379'
 
+# Email Settings
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
