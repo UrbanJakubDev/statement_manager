@@ -1,13 +1,17 @@
 import React, { useEffect } from 'react'
+import axios from 'axios'
+
+// Importing the components
 import FileForm from '../components/core/forms/fileForm'
 import XmlGenForm from '../components/core/forms/dateForm'
-import axios from 'axios'
+import { useDownloadFile } from '../utils/useDownloadFile'
 
 type Props = {}
 
 interface IDateFormInput {
     year: number
     month: number
+    unitsLimit: number
 }
 
 const Ote = (props: Props) => {
@@ -15,19 +19,20 @@ const Ote = (props: Props) => {
 
     // XmlGenForm submit handler
     const handleDateFormSubmit = (params: IDateFormInput) => {
-        downloadData(params)
+        downloadFile(params)
     }
     // Utills
-    const generateDownloadFileName = () => {
+    const getFileName = () => {
         let date = new Date()
-        let str_date = date.toISOString()
-        return str_date
+        return date.toISOString() + '.zip'
     }
 
+
+    // TODO: Refactor to hook
     const makeDownload = (data: BlobPart) => {
         const url = window.URL.createObjectURL(new Blob([data]))
         const link = document.createElement('a')
-        const fileName = generateDownloadFileName() + '.zip'
+        const fileName = getFileName()
         link.href = url
         link.setAttribute('download', fileName)
         document.body.appendChild(link)
@@ -35,7 +40,7 @@ const Ote = (props: Props) => {
     }
 
     // Axios calls functions
-    const downloadData = async (params: IDateFormInput) => {
+    const downloadFile = async (params: IDateFormInput) => {
         const response = await axios
             .get('http://localhost:4200/ote/make_xml_message/', {
                 responseType: 'blob',
@@ -48,7 +53,13 @@ const Ote = (props: Props) => {
 
     return (
         <div>
+            1. krok: Vygeneruj soubory pro dotaz na OTE
             <XmlGenForm onDateFormSubmit={handleDateFormSubmit} />
+
+            2.krok: Nahrajte soubor do systému
+            <FileForm apiURL="http://localhost:4200/ote/parse_xml_message/" />
+
+            3.krok: Vygeneruj XLSX soubor
         </div>
     )
 }

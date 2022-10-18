@@ -44,6 +44,25 @@ class MakeXMLMessageView(views.APIView):
         return response
 
 
+class ParseXMLMessageView(views.APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def post(self, request):
+
+        # get files from request
+        files = request.FILES.getlist('files')
+
+        for file in files:
+            print(file.name)
+
+
+
+
+
+        return Response('OK')
+
+
+
 # Only for testing purposes
 # View to load Units from csv file to database
 class LoadUnitsView(views.APIView):

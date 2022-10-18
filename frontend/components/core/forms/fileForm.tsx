@@ -1,7 +1,9 @@
 import axios from 'axios'
 import React from 'react'
 
-type Props = {}
+type Props = {
+    apiURL: string
+}
 
 const FileForm = (props: Props) => {
     const [fileArray, setFileArray] = React.useState<File[]>([])
@@ -10,6 +12,8 @@ const FileForm = (props: Props) => {
         message: 'No file uploaded',
         filename: '',
     })
+
+    const apiURL = props.apiURL
 
     // Utills
     const clearInput = () => {
@@ -38,10 +42,10 @@ const FileForm = (props: Props) => {
         if (fileArray.length > 0) {
             const formData = new FormData()
             fileArray.forEach((file) => {
-                formData.append('file', file)
+                formData.append('files', file)
             })
             axios
-                .post('http://localhost:4200/example/upload/', formData)
+                .post(apiURL, formData)
                 .then((res) => {
                     setUploadResponse(res.data)
                     setIsUploaded(true)
@@ -64,7 +68,7 @@ const FileForm = (props: Props) => {
                     id="uploadFile"
                     type="file"
                     multiple
-                    accept=".xls,.xlsx,.csv"
+                    accept=".xls,.xlsx,.csv,.xml"
                     onChange={handleFileChange}
                 />
                 <button type="submit" onClick={handleFileUpload}>
