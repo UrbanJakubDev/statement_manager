@@ -3,11 +3,17 @@ import { useForm } from 'react-hook-form'
 
 type Props = {
     // Callback function to return the selected year and month to the parent component
-    onDateFormSubmit: (params: { year: number; month: number }) => void
+    onDateFormSubmit: (params: { year: number; month: number, unitsLimit: number }) => void
 }
 
 const DateForm = (props: Props) => {
     const { register, handleSubmit } = useForm()
+
+    const getActualMonth = () => {
+        let month = new Date().getMonth().toString()
+        return month.length === 1 ? '0' + month : month
+    }
+
 
     // Form submit handler
     const onSubmit = (data: any) => {
@@ -21,13 +27,13 @@ const DateForm = (props: Props) => {
             <h2>Date picker</h2>
             <form onSubmit={handleSubmit(onSubmit, onErrors)}>
                 <label htmlFor="year">Year</label>
-                <select id="year" {...register('year')}>
+                <select id="year" {...register('year')} defaultValue={new Date().getFullYear()}>
                     <option value="2022">2022</option>
                     <option value="2023">2023</option>
                     <option value="2024">2024</option>
                 </select>
                 <label htmlFor="month">Month</label>
-                <select id="month" {...register('month')}>
+                <select id="month" {...register('month')} defaultValue={getActualMonth()}>
                     <option value="01">01</option>
                     <option value="02">02</option>
                     <option value="03">03</option>
